@@ -29,9 +29,9 @@ const Header = (props) => {
               </Nav.Link>
             </Nav>
             <Nav className="justify-content-end">
-              <NavDropdown title="Zarządzanie" id="basic-nav-dropdown">
-                <NavDropdown.Item href="#action/3.1">Zapisz</NavDropdown.Item>
-                <NavDropdown.Item href="#action/3.2">Pobierz</NavDropdown.Item>
+              <NavDropdown title="Profil" id="basic-nav-dropdown">
+                <NavDropdown.Item href="#action/3.1">Zaloguj</NavDropdown.Item>
+                <NavDropdown.Item href="#action/3.2">Zarejestruj</NavDropdown.Item>
                 <NavDropdown.Divider />
                 <NavDropdown.Item href="#action/3.3">Wyloguj</NavDropdown.Item>
               </NavDropdown>

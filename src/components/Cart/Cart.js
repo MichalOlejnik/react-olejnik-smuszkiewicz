@@ -21,9 +21,31 @@ const Cart = (props) => {
     cartCtx.addItem({ ...item, amount: 1 });
   };
 
-  const orderHandler = () => {
+  const showCheckout = () => {
     setIsCheckout(true);
   };
+
+  const hideCheckout = () => {
+    setIsCheckout(false)
+  }
+
+  const submitOrderHandler = (userData) => {
+    fetch(
+      "https://sklepik-olejnik-smuszkie-5edcf-default-rtdb.firebaseio.com/orders.json",
+      {
+        method: "POST",
+        body: JSON.stringify({
+          user: userData,
+          orderedItems: cartCtx.items,
+        }),
+      }
+    );
+  };
+
+  const onHideHandler = () => {
+    props.onClose()
+    hideCheckout()
+  }
 
   const cartItems = (
     <ListGroup>
@@ -40,7 +62,7 @@ const Cart = (props) => {
     </ListGroup>
   );
   return (
-    <Modal show={props.showCart} onHide={props.onClose}>
+    <Modal show={props.showCart} onHide={onHideHandler}>
       <Modal.Body>
         {cartItems}
         <hr />
@@ -50,7 +72,7 @@ const Cart = (props) => {
       {isCheckout && (
         <Modal.Body>
           <hr />
-          <Checkout onClose={props.onClose}/>
+          <Checkout onClose={onHideHandler} onSubmit={submitOrderHandler} />
         </Modal.Body>
       )}
       {!isCheckout && (
@@ -59,7 +81,7 @@ const Cart = (props) => {
             Zamknij
           </Button>
           {hasItems && (
-            <Button variant="success" onClick={orderHandler}>
+            <Button variant="success" onClick={showCheckout}>
               Zamów
             </Button>
           )}
