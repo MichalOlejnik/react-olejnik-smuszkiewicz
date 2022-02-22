@@ -1,5 +1,4 @@
 import { Container, Row } from "react-bootstrap";
-import Cart from "./components/Cart/Cart";
 import Header from "./components/Layout/Header";
 import ProductsList from "./components/Products/ProductsList";
 import CartProvider from "./store/CartProvider";

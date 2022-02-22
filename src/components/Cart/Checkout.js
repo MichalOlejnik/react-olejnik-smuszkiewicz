@@ -1,5 +1,5 @@
 import "bootstrap/dist/css/bootstrap.min.css";
-import { Form, Row, Col, InputGroup, Button } from "react-bootstrap";
+import { Form, Row, Col, Button } from "react-bootstrap";
 import { useState, useRef } from "react";
 
 const Checkout = (props) => {
@@ -12,6 +12,7 @@ const Checkout = (props) => {
   const [validated, setValidated] = useState(false);
 
   const handleSubmit = (event) => {
+    event.preventDefault();
     const form = event.currentTarget;
 
     const enteredFName = fNameInputRef.current.value;
@@ -23,7 +24,6 @@ const Checkout = (props) => {
     setValidated(true);
 
     if (form.checkValidity() === false) {
-      event.preventDefault();
       event.stopPropagation();
       return;
     }
@@ -35,6 +35,8 @@ const Checkout = (props) => {
       street: enteredStreet,
       code: enteredCode,
     });
+
+    props.onClose();
   };
 
   return (
