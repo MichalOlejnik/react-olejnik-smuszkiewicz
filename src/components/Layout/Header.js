@@ -25,6 +25,10 @@ const Header = (props) => {
   const handleCloseAuth = () => setShowAuth(false);
   const handleOpenAuth = () => setShowAuth(true);
 
+  const handleLogout = () => {
+    authCtx.logout()
+  }
+
   return (
     <div>
       <Navbar bg="light" expand="lg">
@@ -48,7 +52,7 @@ const Header = (props) => {
                   </NavDropdown.Item>
                 )}
                 {isLoggedIn && (
-                  <NavDropdown.Item href="#action/3.2">
+                  <NavDropdown.Item onClick={handleLogout}>
                     Wyloguj
                   </NavDropdown.Item>
                 )}
