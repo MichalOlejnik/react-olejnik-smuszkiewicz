@@ -32,52 +32,16 @@ const AuthForm = (props) => {
 
     if (form.checkValidity() === false) {
       event.stopPropagation();
-      console.log("tu");
       return;
     }
 
     setIsLoading(true);
-    let url = "";
 
     if (isLogin) {
-      url =
-        "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyDjKLmh1UYeqyMf8sgu1fi-h5Uefm03PbA";
+      authCtx.loginUser(enteredEmail, enteredPassword)
     } else {
-      url =
-        "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyDjKLmh1UYeqyMf8sgu1fi-h5Uefm03PbA";
+      authCtx.addUser(enteredEmail, enteredPassword)
     }
-
-    fetch(url, {
-      method: "POST",
-      body: JSON.stringify({
-        email: enteredEmail,
-        password: enteredPassword,
-        returnSecureToken: true,
-      }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((res) => {
-        setIsLoading(false);
-        if (res.ok) {
-          return res.json();
-        } else {
-          res.json().then((data) => {
-            let errorMessage = "Rejestracja nieudana";
-            if (data && data.error && data.error.message) {
-              errorMessage = data.error.message;
-            }
-            throw new Error(errorMessage);
-          });
-        }
-      })
-      .then((data) => {
-        authCtx.login(data.idToken);
-      })
-      .catch((err) => {
-        alert(err.message);
-      });
 
     props.onClose();
   };

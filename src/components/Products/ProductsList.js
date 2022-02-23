@@ -1,11 +1,17 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import ProductItem from "./ProductItem/ProductItem";
 import { Container, Row, Col } from "react-bootstrap";
+import AuthContext from "../../store/auth-context";
+
+const SetProductsList = (newProducts) => {
+
+}
 
 const ProductsList = () => {
   const [products, setProducts] = useState([]);
+  const authCtx = useContext(AuthContext)
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -28,7 +34,7 @@ const ProductsList = () => {
 
       setProducts(loadedProducts);
     };
-
+    
     fetchProducts();
   }, []);
 
