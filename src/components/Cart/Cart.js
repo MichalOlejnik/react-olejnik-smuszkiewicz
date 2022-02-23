@@ -5,12 +5,13 @@ import { Button, ListGroup, Modal } from "react-bootstrap";
 import CartContext from "../../store/cart-context";
 import CartItem from "./CartItem";
 import Checkout from "./Checkout";
-import AuthContext from "../../store/auth-context";
+import { db } from "../../store/auth-context";
+import { collection, doc, setDoc } from "firebase/firestore";
 
 const Cart = (props) => {
   const [isCheckout, setIsCheckout] = useState(false);
   const cartCtx = useContext(CartContext);
-  const authCtx = useContext(AuthContext);
+  const colRef = collection(db, "orders");
 
   const totalAmount = `${cartCtx.totalAmount.toFixed(2)} zł`;
   const hasItems = cartCtx.items.length > 0;
@@ -32,17 +33,10 @@ const Cart = (props) => {
   };
 
   const submitOrderHandler = (userData) => {
-    fetch(
-      "https://sklepik-olejnik-smuszkie-5edcf-default-rtdb.firebaseio.com/orders.json?auth=" +
-        authCtx.token,
-      {
-        method: "POST",
-        body: JSON.stringify({
-          user: userData,
-          orderedItems: cartCtx.items,
-        }),
-      }
-    );
+    setDoc(doc(colRef), {
+      user: userData,
+      orderedItems: cartCtx.items,
+    });
     cartCtx.items = [];
   };
 

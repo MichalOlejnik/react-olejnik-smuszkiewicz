@@ -1,14 +1,18 @@
 import React, { useState } from "react";
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
 import {
   getAuth,
   createUserWithEmailAndPassword,
   signOut,
   signInWithEmailAndPassword,
 } from "firebase/auth";
-import { getFirestore, collection, getDocs } from "firebase/firestore";
-import ProductsList from "../components/Products/ProductsList";
+import {
+  getFirestore,
+  collection,
+  doc,
+  setDoc,
+  getDoc,
+} from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDjKLmh1UYeqyMf8sgu1fi-h5Uefm03PbA",
@@ -23,16 +27,14 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
-const db = getFirestore();
+export const db = getFirestore();
+const userRef = collection(db, "users");
 const auth = getAuth();
-
-const colRef = collection(db, "products");
 
 const AuthContext = React.createContext({
   token: "",
+  isAdmin: false,
   isLoggedIn: false,
-  products: [],
   login: (token) => {},
   logout: () => {},
   addUser: (email, password) => {},
@@ -41,16 +43,17 @@ const AuthContext = React.createContext({
 
 export const AuthContextProvider = (props) => {
   const [token, setToken] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   const userIsLoggedIn = !!token;
 
-  
   const loginHandler = (token) => {
-      setToken(token);
-    };
-    
-    const logoutHandler = () => {
+    setToken(token);
+  };
+
+  const logoutHandler = () => {
     setToken(null);
+    setIsAdmin(false);
     signOut(auth)
       .then(() => {
         console.log("user signed out");
@@ -63,46 +66,40 @@ export const AuthContextProvider = (props) => {
   const addUser = (email, password) => {
     createUserWithEmailAndPassword(auth, email, password)
       .then((cred) => {
-        console.log("user created: ", cred.user);
         loginHandler(cred.user.accessToken);
+        setDoc(doc(userRef, cred.user.uid), {
+          isAdmin: false,
+        });
+        getDoc(doc(userRef, cred.user.uid)).then((snapshot) => {
+          setIsAdmin(snapshot.data().isAdmin);
+        });
       })
       .catch((err) => {
         console.log(err.message);
       });
   };
-  
+
   const loginUser = (email, password) => {
     signInWithEmailAndPassword(auth, email, password)
       .then((cred) => {
-        console.log("user logged in: ", cred.user);
         loginHandler(cred.user.accessToken);
+        getDoc(doc(userRef, cred.user.uid)).then((snapshot) => {
+          if (snapshot.data().isAdmin == true) {
+            setIsAdmin(true);
+          } else {
+            setIsAdmin(false);
+          }
+        });
       })
       .catch((err) => {
         console.log(err.message);
-    });
+      });
   };
 
-  const getProducts = () => {
-      const products = [];
-    getDocs(colRef)
-    .then((snapshot) => {
-        snapshot.docs.forEach((doc) => {
-          products.push({ ...doc.data(), id: doc.id });
-        });
-        console.log(products);
-        return products
-      })
-      .catch((err) => {
-          console.log(err.message);
-        });
-    };
-
-    const products = getProducts();
-    
   const contextValue = {
     token: token,
+    isAdmin: isAdmin,
     isLoggedIn: userIsLoggedIn,
-    products:products,
     login: loginHandler,
     logout: logoutHandler,
     addUser: addUser,

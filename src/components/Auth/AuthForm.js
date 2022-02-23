@@ -38,9 +38,9 @@ const AuthForm = (props) => {
     setIsLoading(true);
 
     if (isLogin) {
-      authCtx.loginUser(enteredEmail, enteredPassword)
+      authCtx.loginUser(enteredEmail, enteredPassword);
     } else {
-      authCtx.addUser(enteredEmail, enteredPassword)
+      authCtx.addUser(enteredEmail, enteredPassword);
     }
 
     props.onClose();

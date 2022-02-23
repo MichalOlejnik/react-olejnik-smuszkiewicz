@@ -5,6 +5,7 @@ import Cart from "../Cart/Cart";
 import CartContext from "../../store/cart-context";
 import AuthForm from "../Auth/AuthForm";
 import AuthContext from "../../store/auth-context";
+import AddProduct from "../Products/AddProduct";
 
 const Header = (props) => {
   const cartCtx = useContext(CartContext);
@@ -12,8 +13,10 @@ const Header = (props) => {
 
   const [showCart, setShowCart] = useState(false);
   const [showAuth, setShowAuth] = useState(false);
+  const [showAddProduct, setShowAddProduct] = useState(false);
 
   const isLoggedIn = authCtx.isLoggedIn;
+  const isAdmin = authCtx.isAdmin;
 
   const numberOfCartItems = cartCtx.items.reduce((curNumber, item) => {
     return curNumber + item.amount;
@@ -25,9 +28,12 @@ const Header = (props) => {
   const handleCloseAuth = () => setShowAuth(false);
   const handleOpenAuth = () => setShowAuth(true);
 
+  const handleCloseAddProduct = () => setShowAddProduct(false);
+  const handleOpenAddProduct = () => setShowAddProduct(true);
+
   const handleLogout = () => {
-    authCtx.logout()
-  }
+    authCtx.logout();
+  };
 
   return (
     <div>
@@ -38,9 +44,14 @@ const Header = (props) => {
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="me-auto">
               <Nav.Link href="">Produkty</Nav.Link>
-              {isLoggedIn && (
+              {isLoggedIn && !isAdmin && (
                 <Nav.Link onClick={handleOpenCart}>
                   Koszyk <Badge bg="secondary">{numberOfCartItems}</Badge>
+                </Nav.Link>
+              )}
+              {isAdmin && (
+                <Nav.Link onClick={handleOpenAddProduct}>
+                  Dodaj produkt
                 </Nav.Link>
               )}
             </Nav>
@@ -63,6 +74,10 @@ const Header = (props) => {
       </Navbar>
       <Cart showCart={showCart} onClose={handleCloseCart} />
       <AuthForm showAuth={showAuth} onClose={handleCloseAuth} />
+      <AddProduct
+        showAddProduct={showAddProduct}
+        onClose={handleCloseAddProduct}
+      />
     </div>
   );
 };

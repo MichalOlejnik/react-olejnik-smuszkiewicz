@@ -11,6 +11,7 @@ const ProductItem = (props) => {
   const authCtx = useContext(AuthContext);
 
   const isLoggedIn = authCtx.isLoggedIn;
+  const isAdmin = authCtx.isAdmin;
 
   const addToCartHandler = (amount) => {
     CartCtx.addItem({
@@ -34,7 +35,7 @@ const ProductItem = (props) => {
         <Card.Title>{props.name}</Card.Title>
         <Card.Subtitle>{props.price}</Card.Subtitle>
         <Card.Text>{props.desc}</Card.Text>
-        {isLoggedIn && (
+        {isLoggedIn && !isAdmin && (
           <ProductItemForm id={props.id} onAddToCart={addToCartHandler} />
         )}
       </Card.Body>
